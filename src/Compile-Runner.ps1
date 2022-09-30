@@ -80,9 +80,9 @@ try{
     Write-Host  "OutputPath $OutputPath"
 
     if($TestBuild){
-        Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath" 
+        Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath"
     }else{
-        Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath" -noConsole -noOutput -noError
+        Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath" -noOutput -noError
     }
     
 
