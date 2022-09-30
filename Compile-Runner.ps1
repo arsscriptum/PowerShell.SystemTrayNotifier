@@ -7,16 +7,10 @@
 [CmdletBinding(SupportsShouldProcess)]
 param (
         [Parameter(Mandatory = $false)]
-        [string]$ScriptPath="$PSScriptRoot\ShowSystemTrayNotifier.ps1",
-        [Parameter(Mandatory = $false)]
-        [string]$OutputPath="$PSScriptRoot\ShowSystemTrayNotifier.exe",
-        [Parameter(Mandatory = $false)]
         [switch]$Deploy,
         [Parameter(Mandatory = $false)]
         [switch]$TestBuild
     )
-
-
 
 
 
@@ -61,23 +55,43 @@ $ScriptList | ForEach-Object {
 
 
 try{
-    Import-Module PowerShell.Module.Compiler
+    Import-Module PowerShell.Module.Compiler -Force -DisableNameChecking
 
-    Write-Host  "====================================="
-    Write-Host  "Compile-Runner"
-    Write-Host  "====================================="
+    Write-Host  "=====================================" -f DarkCyan
+    Write-Host  "          Compile-Runner             " -f Gray
+    Write-Host  "=====================================" -f DarkCyan
 
-    $RootPath = (Resolve-Path "$PSScriptRoot\..").Path
+    $RootPath = (Resolve-Path "$PSScriptRoot").Path
+
+
+    $Segments = $RootPath.split('\')
+    $DirName = $Segments[$Segments.Count-1]
+    if($DirName -ne 'Posh.SystemTrayNotifier'){
+        throw "This script must be run in the ROOT folder."
+    }
+
     $BinPath = Join-Path $RootPath 'bin'
     $ImgPath = Join-Path $RootPath 'img'
+    $IcoPath = Join-Path $ImgPath 'ico'
     $SrcPath = Join-Path $RootPath 'src'
-    $IconPath = Join-Path $ImgPath 'download.ico'
+    $IconPath = Join-Path $ImgPath 'close128.ico'
 
-    Write-Host  "RootPath $RootPath"
-    Write-Host  "BinPath $BinPath"
-    Write-Host  "ImgPath $ImgPath"
-    Write-Host  "IconPath $IconPath"
-    Write-Host  "OutputPath $OutputPath"
+
+
+
+    $Null = New-Item -Path $BinPath -ItemType directory -force -ErrorAction Ignore
+    [string]$ScriptPath  = Join-Path $SrcPath 'ShowSystemTrayNotifier.ps1'
+
+    $basename = (Get-Item $ScriptPath).BaseName
+
+    # the output path is automatically retrived based on the source file...
+    [string]$OutputPath = "{0}\{1}.exe" -f $BinPath, $basename 
+
+    Write-Verbose  "RootPath $RootPath"
+    Write-Verbose  "BinPath $BinPath"
+    Write-Verbose  "ImgPath $ImgPath"
+    Write-Verbose  "IconPath $IconPath"
+    Write-Verbose  "OutputPath $OutputPath"
 
     if($TestBuild){
         Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath"
@@ -85,6 +99,14 @@ try{
         Invoke-CompilePS1 -inputFile "$ScriptPath" -outputFile "$OutputPath" -iconFile "$IconPath" -noOutput -noError
     }
     
+    Write-Host  "=======================================" -f DarkCyan
+    Write-Host "         𝔼𝕩𝕡𝕠𝕣𝕥 𝕣𝕖𝕢𝕦𝕚𝕣𝕖𝕕 𝕀ℂ𝕆 𝕗𝕚𝕝𝕖𝕤      " -f Gray
+    Write-Host  "=======================================" -f DarkCyan
+    
+    $CopiedIcoFiles = Copy-Item -Path $IcoPath -Destination $BinPath -Recurse -Passthru -ErrorAction Ignore
+    $CopiedIcoFilesCount = $CopiedIcoFiles.Count
+
+    Write-Host "Exported $CopiedIcoFilesCount files to `"$IcoPath`"" 
 
 
     if(Test-Path $OutputPath){
@@ -97,3 +119,5 @@ try{
 }catch {
     Write-Error $_    
 }
+
+ 
