@@ -66,7 +66,7 @@ try{
 
     $Segments = $RootPath.split('\')
     $DirName = $Segments[$Segments.Count-1]
-    if($DirName -ne 'Posh.SystemTrayNotifier'){
+    if($DirName -ne 'PowerShell.SystemTrayNotifier'){
         throw "This script must be run in the ROOT folder."
     }
 
