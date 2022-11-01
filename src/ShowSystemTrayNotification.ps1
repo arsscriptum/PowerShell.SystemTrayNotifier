@@ -55,5 +55,4 @@ function Show-SystemTrayNotification{
         Write-Output $_
     }
 
-
 }
