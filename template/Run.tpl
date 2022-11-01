@@ -10,7 +10,7 @@ param(
     [Parameter(Mandatory=$false)]
     [int]$Duration=3000,
     [Parameter(Mandatory=$false)]
-    [int]$Pause=10
+    [int]$Pause=8
 )   
 
 

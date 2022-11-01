@@ -7,6 +7,9 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter(Mandatory = $false)] 
+    [Alias('r')]
+    [String]$Run,
+    [Parameter(Mandatory = $false)] 
     [Alias('c')]
     [switch]$Clean
 )
@@ -77,3 +80,7 @@ param(
 
     Write-Host "Generating `"$Script:OutPath\Run.ps1`"" -f Red
     Set-Content "$Script:OutPath\Run.ps1" -Value $ScriptContent
+
+    if( [string]::IsNullOrEmpty($Run) -eq $False ){
+        . "$Script:OutPath\Run.ps1" "$Run"
+    }
